@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PAN Card Validator</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#0f172a,#1e3a8a);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.container{
+    width:400px;
+    background:#fff;
+    padding:30px;
+    border-radius:12px;
+    box-shadow:0 10px 25px rgba(0,0,0,.3);
+}
+
+h2{
+    text-align:center;
+    color:#1e3a8a;
+    margin-bottom:20px;
+}
+
+label{
+    display:block;
+    margin-top:15px;
+    font-weight:bold;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin-top:5px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    font-size:16px;
+}
+
+button{
+    width:100%;
+    margin-top:25px;
+    padding:12px;
+    background:#1e3a8a;
+    color:white;
+    border:none;
+    border-radius:6px;
+    font-size:17px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#163172;
+}
+
+#result{
+    margin-top:20px;
+    padding:12px;
+    border-radius:6px;
+    text-align:center;
+    font-weight:bold;
+    font-size:17px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h2>PAN Card Validator</h2>
+
+<label>PAN Number</label>
+<input type="text" id="pan" maxlength="10" placeholder="ABCDE1234F">
+
+<label>First Name</label>
+<input type="text" id="firstName">
+
+<label>Last Name</label>
+<input type="text" id="lastName">
+
+<button onclick="validatePAN()">Validate PAN</button>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+function validatePAN(){
+
+    let pan=document.getElementById("pan").value.trim().toUpperCase();
+    let firstName=document.getElementById("firstName").value.trim().toUpperCase();
+    let lastName=document.getElementById("lastName").value.trim().toUpperCase();
+
+    let result=document.getElementById("result");
+
+    const alphabets="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const identities=['P','C','H','A','B','F','G','J','L','T'];
+
+    if(pan.length!==10){
+        showResult("❌ Your PAN Card is Invalid","red");
+        return;
+    }
+
+    let letters=pan.substring(0,3);
+    let identity=pan.charAt(3);
+    let nameLetter=pan.charAt(4);
+    let numbers=pan.substring(5,9);
+    let checkDigit=pan.charAt(9);
+
+    // First 3 letters
+    for(let ch of letters){
+        if(!alphabets.includes(ch)){
+            showResult("❌ Your PAN Card is Invalid","red");
+            return;
+        }
+    }
+
+    // Identity Check
+    if(!identities.includes(identity)){
+        showResult("❌ Your PAN Card doesn't match the existing database identities","red");
+        return;
+    }
+
+    // Surname Check
+    if(nameLetter===lastName.charAt(0)){
+        // Valid
+    }
+    else if(nameLetter===firstName.charAt(0)){
+        showResult("⚠️ Surname Mismatch","orange");
+        return;
+    }
+    else{
+        showResult("❌ Your PAN Card is Invalid","red");
+        return;
+    }
+
+    // Number Check
+    if(!/^\d{4}$/.test(numbers)){
+        showResult("❌ Your PAN Card is Invalid","red");
+        return;
+    }
+
+    // Last Alphabet
+    if(!alphabets.includes(checkDigit)){
+        showResult("❌ Your PAN Card is Invalid","red");
+        return;
+    }
+
+    showResult("✅ PAN Card is Valid","green");
+}
+
+function showResult(message,color){
+    let result=document.getElementById("result");
+    result.innerHTML=message;
+    result.style.color=color;
+    result.style.border="2px solid "+color;
+}
+
+</script>
+
+</body>
+</html>
